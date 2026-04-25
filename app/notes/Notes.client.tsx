@@ -13,7 +13,7 @@ import css from "./page.module.css";
 
 const PER_PAGE = 12;
 
-export default function NotesClient() {
+export default function NotesClient({ tag }: { tag?: string } = {}) {
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -30,12 +30,13 @@ export default function NotesClient() {
   };
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["notes", page, debouncedSearch],
+    queryKey: ["notes", page, debouncedSearch, tag],
     queryFn: () =>
       fetchNotes({
         page,
         perPage: PER_PAGE,
         search: debouncedSearch || undefined,
+        tag: tag && tag !== "all" ? tag : undefined,
       }),
     placeholderData: keepPreviousData,
   });
