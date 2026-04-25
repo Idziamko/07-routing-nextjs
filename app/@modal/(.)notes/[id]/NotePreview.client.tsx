@@ -1,14 +1,18 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { fetchNoteById } from "@/lib/api";
-import css from "./NotePreview.module.css";
+import Modal from "@/components/Modal/Modal";
+import css from "@/components/NotePreview/NotePreview.module.css";
 
 interface NotePreviewProps {
   id: string;
 }
 
 export default function NotePreview({ id }: NotePreviewProps) {
+  const router = useRouter();
+  
   const {
     data: note,
     isLoading,
@@ -20,21 +24,31 @@ export default function NotePreview({ id }: NotePreviewProps) {
   });
 
   if (isLoading) {
-    return <p>Loading, please wait...</p>;
+    return (
+      <Modal onClose={() => router.back()}>
+        <p>Loading, please wait...</p>
+      </Modal>
+    );
   }
 
   if (isError || !note) {
-    return <p>Something went wrong.</p>;
+    return (
+      <Modal onClose={() => router.back()}>
+        <p>Something went wrong.</p>
+      </Modal>
+    );
   }
 
   return (
-    <div className={css.preview}>
-      <h2 className={css.title}>{note.title}</h2>
-      <p className={css.tag}>{note.tag}</p>
-      <p className={css.content}>{note.content}</p>
-      <p className={css.date}>
-        {new Date(note.createdAt).toLocaleString()}
-      </p>
-    </div>
+    <Modal onClose={() => router.back()}>
+      <div className={css.preview}>
+        <h2 className={css.title}>{note.title}</h2>
+        <p className={css.tag}>{note.tag}</p>
+        <p className={css.content}>{note.content}</p>
+        <p className={css.date}>
+          {new Date(note.createdAt).toLocaleString()}
+        </p>
+      </div>
+    </Modal>
   );
 }
